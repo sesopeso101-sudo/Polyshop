@@ -18,10 +18,10 @@ function Navbar({ darkMode, setDarkMode }) {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-8">
-            <a href="#" className="text-sm text-slate-600 hover:text-slate-900 transition">Markets</a>
-            <a href="#" className="text-sm text-slate-600 hover:text-slate-900 transition">Trending</a>
-            <a href="#" className="text-sm text-slate-600 hover:text-slate-900 transition">How It Works</a>
-            <a href="#" className="text-sm text-slate-600 hover:text-slate-900 transition">Docs</a>
+            <button className="text-sm text-slate-600 hover:text-slate-900 transition">Markets</button>
+            <button className="text-sm text-slate-600 hover:text-slate-900 transition">Trending</button>
+            <button className="text-sm text-slate-600 hover:text-slate-900 transition">How It Works</button>
+            <button className="text-sm text-slate-600 hover:text-slate-900 transition">Docs</button>
           </div>
 
           {/* Search & Auth */}
@@ -47,9 +47,9 @@ function Navbar({ darkMode, setDarkMode }) {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="border-t border-slate-200 py-4 space-y-4">
-            <a href="#" className="block text-sm text-slate-600 hover:text-slate-900">Markets</a>
-            <a href="#" className="block text-sm text-slate-600 hover:text-slate-900">Trending</a>
-            <a href="#" className="block text-sm text-slate-600 hover:text-slate-900">How It Works</a>
+            <button className="block text-sm text-slate-600 hover:text-slate-900 w-full text-left">Markets</button>
+            <button className="block text-sm text-slate-600 hover:text-slate-900 w-full text-left">Trending</button>
+            <button className="block text-sm text-slate-600 hover:text-slate-900 w-full text-left">How It Works</button>
             <button className="btn-primary w-full text-sm">Start Trading</button>
           </div>
         )}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, TrendingUp } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 function Hero() {
   return (
