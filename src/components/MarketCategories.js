@@ -1,20 +1,20 @@
 import React from 'react';
-import { BarChart3, DollarSign, Globe, Zap } from 'lucide-react';
+import { Smartphone, Car, Home, Wrench } from 'lucide-react';
 
 function MarketCategories() {
   const categories = [
-    { icon: DollarSign, label: 'Finance', count: '1,240 markets', color: 'from-green-500 to-emerald-500' },
-    { icon: Globe, label: 'Politics', count: '892 markets', color: 'from-blue-500 to-cyan-500' },
-    { icon: BarChart3, label: 'Economics', count: '567 markets', color: 'from-purple-500 to-pink-500' },
-    { icon: Zap, label: 'Technology', count: '1,456 markets', color: 'from-orange-500 to-red-500' },
+    { icon: Smartphone, label: 'Elektronikë', count: '15 produkte', color: 'from-green-500 to-emerald-500' },
+    { icon: Car, label: 'Makina', count: '8 produkte', color: 'from-blue-500 to-cyan-500' },
+    { icon: Home, label: 'Pasuri', count: '12 produkte', color: 'from-purple-500 to-pink-500' },
+    { icon: Wrench, label: 'Shërbime', count: '20 produkte', color: 'from-orange-500 to-red-500' },
   ];
 
   return (
     <section className="section-padding bg-slate-50">
       <div className="section-container">
         <div className="text-center mb-16">
-          <h2 className="heading-2 mb-3">Browse by Category</h2>
-          <p className="text-lg text-slate-600">Explore markets across different sectors and find opportunities that interest you</p>
+          <h2 className="heading-2 mb-3">Shfletimi sipas Kategorisë</h2>
+          <p className="text-lg text-slate-600">Eksploroni produktet në kategori të ndryshme dhe gjeni atë që kërkoni</p>
         </div>
 
         <div className="grid md:grid-cols-4 gap-6">
@@ -28,7 +28,7 @@ function MarketCategories() {
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">{cat.label}</h3>
                 <p className="text-sm text-slate-600">{cat.count}</p>
                 <div className="mt-4 flex items-center text-blue-600 text-sm font-semibold opacity-0 group-hover:opacity-100 transition">
-                  Explore →
+                  Shfletoni →
                 </div>
               </div>
             );
