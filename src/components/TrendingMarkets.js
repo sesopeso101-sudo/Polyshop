@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUp, Fire } from 'lucide-react';
+import { ArrowUp, Flame } from 'lucide-react';
 
 function TrendingMarkets() {
   const trending = [
@@ -24,7 +24,7 @@ function TrendingMarkets() {
           {trending.map((market, i) => (
             <div key={i} className="card group hover:bg-slate-50 flex items-center justify-between cursor-pointer transition">
               <div className="flex items-center gap-4 flex-1">
-                {market.hot && <Fire size={20} className="text-orange-500 flex-shrink-0" />}
+                {market.hot && <Flame size={20} className="text-orange-500 flex-shrink-0" />}
                 <div className="flex-1">
                   <h4 className="font-semibold text-slate-900 group-hover:text-blue-600 transition">{market.title}</h4>
                   <div className="flex items-center gap-2 mt-1">
