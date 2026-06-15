@@ -12,25 +12,25 @@ function Footer({ darkMode }) {
           <div>
             <h4 className="font-bold mb-4">Ndihmë</h4>
             <ul className="text-gray-400 space-y-2">
-              <li><a href="#" className="hover:text-white">Kontakti</a></li>
-              <li><a href="#" className="hover:text-white">FAQ</a></li>
-              <li><a href="#" className="hover:text-white">Kthimet</a></li>
+              <li><button className="hover:text-white bg-none border-none p-0 cursor-pointer text-left">Kontakti</button></li>
+              <li><button className="hover:text-white bg-none border-none p-0 cursor-pointer text-left">FAQ</button></li>
+              <li><button className="hover:text-white bg-none border-none p-0 cursor-pointer text-left">Kthimet</button></li>
             </ul>
           </div>
           <div>
             <h4 className="font-bold mb-4">Ligjore</h4>
             <ul className="text-gray-400 space-y-2">
-              <li><a href="#" className="hover:text-white">Kushtet</a></li>
-              <li><a href="#" className="hover:text-white">Privatësia</a></li>
-              <li><a href="#" className="hover:text-white">Cookie-t</a></li>
+              <li><button className="hover:text-white bg-none border-none p-0 cursor-pointer text-left">Kushtet</button></li>
+              <li><button className="hover:text-white bg-none border-none p-0 cursor-pointer text-left">Privatësia</button></li>
+              <li><button className="hover:text-white bg-none border-none p-0 cursor-pointer text-left">Cookie-t</button></li>
             </ul>
           </div>
           <div>
             <h4 className="font-bold mb-4">Na Ndiqni</h4>
             <div className="flex gap-4">
-              <a href="#" className="hover:text-blue-400">Facebook</a>
-              <a href="#" className="hover:text-blue-400">Instagram</a>
-              <a href="#" className="hover:text-blue-400">Twitter</a>
+              <button className="hover:text-blue-400 bg-none border-none p-0 cursor-pointer">Facebook</button>
+              <button className="hover:text-blue-400 bg-none border-none p-0 cursor-pointer">Instagram</button>
+              <button className="hover:text-blue-400 bg-none border-none p-0 cursor-pointer">Twitter</button>
             </div>
           </div>
         </div>
