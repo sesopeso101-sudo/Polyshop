@@ -1,22 +1,22 @@
 import React from 'react';
-import { Search, Zap, Award } from 'lucide-react';
+import { Search, ShoppingBag, Award } from 'lucide-react';
 
 function HowItWorks() {
   const steps = [
     {
       icon: Search,
-      title: 'Zbuloni Tregjet',
-      description: 'Shfletoni mijëra trege parashikimi në kategori të ndryshme dhe gjeni ngjarjet në të cilat dëshironi të tregtoni.'
+      title: 'Shfletoni Katalogun',
+      description: 'Eksploroni ndryshimin e gjerë të produkteve dhe shërbimeve në kategori të ndryshme.'
     },
     {
-      icon: Zap,
-      title: 'Vendosni Blerjen Tuaj',
-      description: 'Bliherje aksione që përfaqësojnë parashikimin tuaj. Probabiliteti më i lartë = çimi më i ulët. Menaxhimi i thjeshtë i rrezikut.'
+      icon: ShoppingBag,
+      title: 'Shtoni në Shporta',
+      description: 'Zgjidh produktet që të pëlqejnë dhe shto në shporta. Pagesa e sigurt dhe e thjeshtë.'
     },
     {
       icon: Award,
-      title: 'Fitoni Shpërblime',
-      description: 'Nëse keni të drejtë, aksionet tuaja vlejnë $1. Tërhiqni fitimin e tuaj në çdo kohë, kudo.'
+      title: 'Merr Porositjen Tuaj',
+      description: 'Dorëzim i shpejtë në mbarë Shqipërinë. Nëse nuk jeni të kënaqur, kthim falas në 30 ditë.'
     },
   ];
 
@@ -24,8 +24,8 @@ function HowItWorks() {
     <section className="section-padding bg-slate-50">
       <div className="section-container">
         <div className="text-center mb-16">
-          <h2 className="heading-2 mb-3">Si Funksionon</h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">Filloni në tre hapa të thjeshtë dhe bashkohuni me mijëra tregtarë në tregjen më transparente të parashikimit në botë</p>
+          <h2 className="heading-2 mb-3">Si Punon</h2>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">Tre hapa të thjeshtë për të blerë produktet dhe shërbime të cilësisë së lartë direkt në shtëpinë tuaj.</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
