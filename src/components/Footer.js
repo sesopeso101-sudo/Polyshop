@@ -9,64 +9,64 @@ function Footer() {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">Ⓟ</span>
+                <span className="text-white font-bold">🛍️</span>
               </div>
               <span className="text-xl font-bold text-white">Polyshop</span>
             </div>
-            <p className="text-slate-400 text-sm">The future of prediction markets in Albania</p>
+            <p className="text-slate-400 text-sm">Tregu dixhital i Shqipërisë - Cilësia, Besueshmëria, Shërbimi</p>
           </div>
 
-          {/* Markets */}
+          {/* Produktet */}
           <div>
-            <h4 className="font-semibold text-white mb-4">Markets</h4>
+            <h4 className="font-semibold text-white mb-4">Produktet</h4>
             <ul className="space-y-2 text-sm">
-              <li><button className="text-slate-400 hover:text-white transition">All Markets</button></li>
-              <li><button className="text-slate-400 hover:text-white transition">Trending</button></li>
-              <li><button className="text-slate-400 hover:text-white transition">Categories</button></li>
-              <li><button className="text-slate-400 hover:text-white transition">Create Market</button></li>
+              <li><button className="text-slate-400 hover:text-white transition">Të Gjitha Produktet</button></li>
+              <li><button className="text-slate-400 hover:text-white transition">Në Trend</button></li>
+              <li><button className="text-slate-400 hover:text-white transition">Kategoritë</button></li>
+              <li><button className="text-slate-400 hover:text-white transition">Ofertat Speciale</button></li>
             </ul>
           </div>
 
-          {/* Company */}
+          {/* Kompania */}
           <div>
-            <h4 className="font-semibold text-white mb-4">Company</h4>
+            <h4 className="font-semibold text-white mb-4">Kompania</h4>
             <ul className="space-y-2 text-sm">
-              <li><button className="text-slate-400 hover:text-white transition">About</button></li>
+              <li><button className="text-slate-400 hover:text-white transition">Rreth Nesh</button></li>
               <li><button className="text-slate-400 hover:text-white transition">Blog</button></li>
-              <li><button className="text-slate-400 hover:text-white transition">Careers</button></li>
-              <li><button className="text-slate-400 hover:text-white transition">Press</button></li>
+              <li><button className="text-slate-400 hover:text-white transition">Karrierat</button></li>
+              <li><button className="text-slate-400 hover:text-white transition">Lajme</button></li>
             </ul>
           </div>
 
-          {/* Resources */}
+          {/* Ndihmë */}
           <div>
-            <h4 className="font-semibold text-white mb-4">Resources</h4>
+            <h4 className="font-semibold text-white mb-4">Ndihmë</h4>
             <ul className="space-y-2 text-sm">
-              <li><button className="text-slate-400 hover:text-white transition">Documentation</button></li>
-              <li><button className="text-slate-400 hover:text-white transition">API Reference</button></li>
-              <li><button className="text-slate-400 hover:text-white transition">Support</button></li>
-              <li><button className="text-slate-400 hover:text-white transition">Status</button></li>
+              <li><button className="text-slate-400 hover:text-white transition">Dokumentacioni</button></li>
+              <li><button className="text-slate-400 hover:text-white transition">Pyetjet Shpesh</button></li>
+              <li><button className="text-slate-400 hover:text-white transition">Mbështetje</button></li>
+              <li><button className="text-slate-400 hover:text-white transition">Statusi</button></li>
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Juridike */}
           <div>
-            <h4 className="font-semibold text-white mb-4">Legal</h4>
+            <h4 className="font-semibold text-white mb-4">Juridike</h4>
             <ul className="space-y-2 text-sm">
-              <li><button className="text-slate-400 hover:text-white transition">Privacy</button></li>
-              <li><button className="text-slate-400 hover:text-white transition">Terms</button></li>
-              <li><button className="text-slate-400 hover:text-white transition">Cookies</button></li>
-              <li><button className="text-slate-400 hover:text-white transition">Security</button></li>
+              <li><button className="text-slate-400 hover:text-white transition">Privatësia</button></li>
+              <li><button className="text-slate-400 hover:text-white transition">Kushtet</button></li>
+              <li><button className="text-slate-400 hover:text-white transition">Cookie-të</button></li>
+              <li><button className="text-slate-400 hover:text-white transition">Sigurimi</button></li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row items-center justify-between">
-          <p className="text-slate-400 text-sm">&copy; 2024 Polyshop. All rights reserved.</p>
+          <p className="text-slate-400 text-sm">&copy; 2026 Polyshop. Të gjitha të drejtat e rezervuara.</p>
           <div className="flex items-center gap-6 mt-6 md:mt-0">
             <button className="text-slate-400 hover:text-white transition">Twitter</button>
-            <button className="text-slate-400 hover:text-white transition">GitHub</button>
-            <button className="text-slate-400 hover:text-white transition">Discord</button>
+            <button className="text-slate-400 hover:text-white transition">Facebook</button>
+            <button className="text-slate-400 hover:text-white transition">Instagram</button>
           </div>
         </div>
       </div>
