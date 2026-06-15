@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, Heart, ShoppingCart } from 'lucide-react';
+import { Star, ShoppingCart } from 'lucide-react';
 
 function PopularItems() {
   const items = [
