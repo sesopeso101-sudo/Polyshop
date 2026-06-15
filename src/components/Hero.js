@@ -13,34 +13,34 @@ function Hero() {
                 <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
                 <span className="text-sm font-medium text-blue-600">Mirë se vini në Polyshop Shqipëri</span>
               </div>
-              <h1 className="heading-1">Tregtoni Tregjet E Vërteta, Parashikoni të Ardhmen</h1>
-              <p className="subheading max-w-lg">Përjetoni të ardhmen e tregjeve të parashikimit. Polyshop sjell tregtim transparent dhe të decentralizuar në Shqipëri me të dhëna në kohë reale, grafikë të avancuar dhe fitim të lehtë.</p>
+              <h1 className="heading-1">Bli Teknologjinë Më të Fundit me Çmimet Më të Mira</h1>
+              <p className="subheading max-w-lg">Zbulo smartphone, laptopë, aksesorë dhe produkte teknologjike të përzgjedhura me kujdes. Polyshop sjell blerje të sigurta, dërgesë të shpejtë dhe cilësi të garantuar në gjithë Shqipërinë.</p>
             </div>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
               <button className="btn-primary inline-flex items-center justify-center gap-2 group">
-                Fillo të Tregtosh Tani
+                Bli Tani
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition" />
               </button>
               <button className="btn-secondary inline-flex items-center justify-center gap-2">
-                Shiko Demo
+                Shiko Produktet
               </button>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-6 pt-8 border-t border-slate-200">
               <div>
-                <div className="text-3xl font-bold text-slate-900">500K+</div>
-                <div className="text-sm text-slate-600">Tregtarë Aktivë</div>
+                <div className="text-3xl font-bold text-slate-900">10,000+</div>
+                <div className="text-sm text-slate-600">Klientë të Kënaqur</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-slate-900">$2.4B</div>
-                <div className="text-sm text-slate-600">Volum Tregimi</div>
+                <div className="text-3xl font-bold text-slate-900">5,000+</div>
+                <div className="text-sm text-slate-600">Produkte në Stok</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-slate-900">24/7</div>
-                <div className="text-sm text-slate-600">Tregjet E Hapur</div>
+                <div className="text-sm text-slate-600">Porosi Online</div>
               </div>
             </div>
           </div>
@@ -51,21 +51,21 @@ function Hero() {
             <div className="relative card-lg h-full flex flex-col justify-between">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="text-sm font-semibold text-slate-900">Përqasja e Tregut</div>
-                  <span className="text-xs font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full">+12.5%</span>
+                  <div className="text-sm font-semibold text-slate-900">Ofertat e Javës</div>
+                  <span className="text-xs font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full">-25%</span>
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-600">Bitcoin > $100K deri në Fund të Vitit</span>
-                    <span className="text-lg font-semibold text-blue-600">72%</span>
+                    <span className="text-sm text-slate-600">iPhone 15 Pro Max - Zbritje Sezonale</span>
+                    <span className="text-lg font-semibold text-blue-600">85%</span>
                   </div>
                   <div className="w-full bg-slate-200 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full" style={{width: '72%'}}></div>
+                    <div className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full" style={{width: '85%'}}></div>
                   </div>
                 </div>
               </div>
               <div className="pt-4 border-t border-slate-200 text-xs text-slate-600">
-                Përditësuar para 2 minutash • 4,582 tregtarë • $48.2M volum
+                Përditësuar para 2 minutash • 1,247 blerjet këtë ditë • $156.8K në shitje
               </div>
             </div>
           </div>
