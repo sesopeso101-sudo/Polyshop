@@ -18,10 +18,10 @@ function Navbar({ darkMode, setDarkMode }) {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-8">
-            <button className="text-sm text-slate-600 hover:text-slate-900 transition">Markets</button>
-            <button className="text-sm text-slate-600 hover:text-slate-900 transition">Trending</button>
-            <button className="text-sm text-slate-600 hover:text-slate-900 transition">How It Works</button>
-            <button className="text-sm text-slate-600 hover:text-slate-900 transition">Docs</button>
+            <button className="text-sm text-slate-600 hover:text-slate-900 transition">Tregjet</button>
+            <button className="text-sm text-slate-600 hover:text-slate-900 transition">Në Trend</button>
+            <button className="text-sm text-slate-600 hover:text-slate-900 transition">Si Funksionon</button>
+            <button className="text-sm text-slate-600 hover:text-slate-900 transition">Dokumentet</button>
           </div>
 
           {/* Search & Auth */}
@@ -30,12 +30,12 @@ function Navbar({ darkMode, setDarkMode }) {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
               <input 
                 type="text" 
-                placeholder="Search markets..." 
+                placeholder="Kërko në tregje..." 
                 className="bg-slate-100 pl-10 pr-4 py-2 rounded-lg text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:bg-slate-50 focus:ring-2 focus:ring-blue-500 transition" 
               />
             </div>
-            <button className="btn-outline py-2 px-4 text-sm">Sign In</button>
-            <button className="btn-primary py-2 px-4 text-sm">Start Trading</button>
+            <button className="btn-outline py-2 px-4 text-sm">Hyr</button>
+            <button className="btn-primary py-2 px-4 text-sm">Fillo të Tregtosh</button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -47,10 +47,10 @@ function Navbar({ darkMode, setDarkMode }) {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="border-t border-slate-200 py-4 space-y-4">
-            <button className="block text-sm text-slate-600 hover:text-slate-900 w-full text-left">Markets</button>
-            <button className="block text-sm text-slate-600 hover:text-slate-900 w-full text-left">Trending</button>
-            <button className="block text-sm text-slate-600 hover:text-slate-900 w-full text-left">How It Works</button>
-            <button className="btn-primary w-full text-sm">Start Trading</button>
+            <button className="block text-sm text-slate-600 hover:text-slate-900 w-full text-left">Tregjet</button>
+            <button className="block text-sm text-slate-600 hover:text-slate-900 w-full text-left">Në Trend</button>
+            <button className="block text-sm text-slate-600 hover:text-slate-900 w-full text-left">Si Funksionon</button>
+            <button className="btn-primary w-full text-sm">Fillo të Tregtosh</button>
           </div>
         )}
       </div>
