@@ -5,18 +5,18 @@ function HowItWorks() {
   const steps = [
     {
       icon: Search,
-      title: 'Discover Markets',
-      description: 'Browse thousands of prediction markets across different categories and find events you want to trade on.'
+      title: 'Zbuloni Tregjet',
+      description: 'Shfletoni mijëra trege parashikimi në kategori të ndryshme dhe gjeni ngjarjet në të cilat dëshironi të tregtoni.'
     },
     {
       icon: Zap,
-      title: 'Place Your Bet',
-      description: 'Buy shares representing your prediction. Higher probability = lower price. Simple risk management.'
+      title: 'Vendosni Blerjen Tuaj',
+      description: 'Bliherje aksione që përfaqësojnë parashikimin tuaj. Probabiliteti më i lartë = çimi më i ulët. Menaxhimi i thjeshtë i rrezikut.'
     },
     {
       icon: Award,
-      title: 'Earn Rewards',
-      description: 'If you\'re right, your shares are worth $1. Withdraw your winnings anytime, anywhere.'
+      title: 'Fitoni Shpërblime',
+      description: 'Nëse keni të drejtë, aksionet tuaja vlejnë $1. Tërhiqni fitimin e tuaj në çdo kohë, kudo.'
     },
   ];
 
@@ -24,8 +24,8 @@ function HowItWorks() {
     <section className="section-padding bg-slate-50">
       <div className="section-container">
         <div className="text-center mb-16">
-          <h2 className="heading-2 mb-3">How It Works</h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">Get started in three simple steps and join thousands of traders in the world's most transparent prediction market</p>
+          <h2 className="heading-2 mb-3">Si Funksionon</h2>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">Filloni në tre hapa të thjeshtë dhe bashkohuni me mijëra tregtarë në tregjen më transparente të parashikimit në botë</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
