@@ -17,7 +17,7 @@ function TrendingMarkets() {
             <h2 className="heading-2 mb-3">Trending Now</h2>
             <p className="text-lg text-slate-600">Markets gaining the most attention from traders today</p>
           </div>
-          <a href="#" className="btn-outline hidden md:inline-flex">View All Trending</a>
+          <button className="btn-outline hidden md:inline-flex">View All Trending</button>
         </div>
 
         <div className="space-y-3">
