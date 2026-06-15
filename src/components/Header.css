@@ -1,11 +1,11 @@
 .header {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
   padding: 16px 24px;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .header-container {
@@ -56,23 +56,23 @@
 .search-input {
   width: 100%;
   padding: 10px 16px 10px 40px;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: #f5f5f5;
+  border: 1px solid #e5e5e5;
   border-radius: 8px;
-  color: #e2e8f0;
+  color: #1a1a1a;
   font-size: 14px;
   transition: all 0.3s ease;
 }
 
 .search-input::placeholder {
-  color: #94a3b8;
+  color: #999;
 }
 
 .search-input:focus {
   outline: none;
-  background: rgba(30, 41, 59, 0.95);
+  background: white;
   border-color: #3b82f6;
-  box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.1);
 }
 
 .search-icon {
@@ -92,17 +92,17 @@
 .purchase-toggle {
   display: flex;
   gap: 8px;
-  background: rgba(15, 23, 42, 0.8);
+  background: #f5f5f5;
   padding: 4px;
   border-radius: 8px;
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  border: 1px solid #e5e5e5;
 }
 
 .toggle-btn {
   padding: 8px 16px;
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: #666;
   cursor: pointer;
   border-radius: 6px;
   font-size: 13px;
@@ -112,13 +112,13 @@
 }
 
 .toggle-btn:hover {
-  color: #e2e8f0;
+  color: #1a1a1a;
 }
 
 .toggle-btn.active {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: #3b82f6;
   color: white;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
 }
 
 .wallet, .cash {
@@ -130,7 +130,7 @@
 
 .wallet-label, .cash-label {
   font-size: 11px;
-  color: #94a3b8;
+  color: #999;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -143,20 +143,20 @@
 
 .deposit-btn {
   padding: 10px 24px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: #3b82f6;
   border: none;
   color: white;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
   white-space: nowrap;
 }
 
 .deposit-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .deposit-btn:active {

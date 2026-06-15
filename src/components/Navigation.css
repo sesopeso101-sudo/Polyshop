@@ -1,11 +1,11 @@
 .navigation {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
-  border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
   padding: 12px 24px;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: thin;
-  scrollbar-color: rgba(59, 130, 246, 0.5) transparent;
+  scrollbar-color: rgba(59, 130, 246, 0.3) transparent;
 }
 
 .nav-container {
@@ -21,10 +21,10 @@
   align-items: center;
   gap: 8px;
   padding: 10px 18px;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: #f5f5f5;
+  border: 1px solid #e5e5e5;
   border-radius: 8px;
-  color: #94a3b8;
+  color: #666;
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
@@ -33,16 +33,16 @@
 }
 
 .nav-item:hover {
-  color: #e2e8f0;
-  border-color: rgba(59, 130, 246, 0.5);
+  color: #1a1a1a;
+  border-color: #d0d0d0;
   transform: translateY(-2px);
 }
 
 .nav-item.active {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: #3b82f6;
   color: white;
   border-color: #3b82f6;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
 }
 
 .nav-emoji {
@@ -62,12 +62,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(59, 130, 246, 0.5);
+  background: rgba(59, 130, 246, 0.3);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(59, 130, 246, 0.8);
+  background: rgba(59, 130, 246, 0.6);
 }
 
 @media (max-width: 768px) {
