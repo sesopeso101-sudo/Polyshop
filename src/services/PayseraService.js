@@ -99,4 +99,7 @@ class PayseraService {
   }
 }
 
-export default new PayseraService();
+// Create and export instance
+const payseraService = new PayseraService();
+
+export default payseraService;
