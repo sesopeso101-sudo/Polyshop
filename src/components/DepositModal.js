@@ -110,16 +110,6 @@ function DepositModal({ isOpen, onClose, onSuccess }) {
               />
               <span className="method-label">🏦 Transferim Bankar</span>
             </label>
-            <label className="method-option">
-              <input
-                type="radio"
-                name="method"
-                value="wallet"
-                checked={selectedMethod === 'wallet'}
-                onChange={(e) => setSelectedMethod(e.target.value)}
-              />
-              <span className="method-label">📱 E-Wallet</span>
-            </label>
           </div>
 
           {/* Amount Section */}
@@ -192,7 +182,7 @@ function DepositModal({ isOpen, onClose, onSuccess }) {
                   Po përpunohet...
                 </>
               ) : (
-                '→ Vazhdo në Paysera'
+                '→ Paguaj Tani'
               )}
             </button>
           </div>
