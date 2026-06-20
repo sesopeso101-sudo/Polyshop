@@ -6,7 +6,6 @@ function DepositModal({ isOpen, onClose, onSuccess }) {
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [selectedMethod, setSelectedMethod] = useState('paypal');
 
   const predefinedAmounts = [10, 25, 50, 100, 250, 500];
   const paypalRef = useRef();
@@ -62,10 +61,10 @@ function DepositModal({ isOpen, onClose, onSuccess }) {
       renderPayPalButtons();
     }
 
-    // Cleanup render when modal closes
+    // Capture the current container reference for cleanup
+    const containerRef = paypalRef.current;
     return () => {
-      const container = paypalRef.current;
-      if (container) container.innerHTML = '';
+      if (containerRef) containerRef.innerHTML = '';
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, amount]);
@@ -111,13 +110,13 @@ function DepositModal({ isOpen, onClose, onSuccess }) {
           throw err;
         }
       },
-      onApprove: async function (data, actions) {
+      onApprove: async function (data) {
         try {
           setLoading(true);
           const capture = await PayPalService.captureOrder(data.orderID);
           setLoading(false);
-          // Expect backend to verify and update wallet, then return success info
-          if (capture && capture.status === 'COMPLETED' || (capture && capture.success)) {
+          const captureOk = Boolean(capture && (capture.status === 'COMPLETED' || capture.success));
+          if (captureOk) {
             if (onSuccess) onSuccess(capture);
             onClose();
           } else {
