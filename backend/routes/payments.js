@@ -2,6 +2,9 @@ const express = require('express');
 const crypto = require('crypto');
 const router = express.Router();
 
+// DB helper
+const paymentDb = require('../db/paymentDb');
+
 // Get credentials from environment variables
 const PROJECT_ID = process.env.PAYSERA_PROJECT_ID;
 const PASSWORD = process.env.PAYSERA_PASSWORD;
@@ -138,7 +141,7 @@ router.post('/initialize', async (req, res) => {
  * Handle Paysera Callback
  * POST /api/payments/callback
  */
-router.post('/callback', (req, res) => {
+router.post('/callback', async (req, res) => {
   try {
     const callbackData = req.body;
 
@@ -155,15 +158,15 @@ router.post('/callback', (req, res) => {
     // Handle different payment statuses
     if (status === '1') {
       // Payment successful
-      updateUserWallet(orderid, amount / 100, 'success');
+      await updateUserWallet(orderid, amount / 100, 'success');
       console.log(`Payment successful: ${orderid}, Amount: ${amount / 100} ${currency}`);
     } else if (status === '2') {
       // Payment pending
-      updateUserWallet(orderid, amount / 100, 'pending');
+      await updateUserWallet(orderid, amount / 100, 'pending');
       console.log(`Payment pending: ${orderid}`);
     } else {
       // Payment failed or cancelled
-      updateUserWallet(orderid, amount / 100, 'failed');
+      await updateUserWallet(orderid, amount / 100, 'failed');
       console.log(`Payment failed: ${orderid}`);
     }
 
@@ -182,9 +185,6 @@ router.post('/callback', (req, res) => {
 router.post('/verify', async (req, res) => {
   try {
     const { paymentId, orderId } = req.body;
-
-    // TODO: Query your database for payment status
-    // This depends on how you store payment records
 
     const paymentRecord = await getPaymentRecord(orderId);
 
@@ -225,7 +225,6 @@ router.post('/verify', async (req, res) => {
  */
 router.get('/history', async (req, res) => {
   try {
-    // TODO: Get payments for authenticated user
     const userId = req.user?.id;
 
     if (!userId) {
@@ -313,8 +312,19 @@ router.post('/paypal/create', async (req, res) => {
 
     const order = await orderResp.json();
 
-    // TODO: Save order.id, amount and user association in your DB so you can verify/capture later.
-    // e.g. await createPaymentRecord({ orderId: order.id, amount, userId: req.user?.id, status: 'created' });
+    // Save order in DB so we can reconcile on capture
+    try {
+      await paymentDb.createPayment({
+        order_id: order.id,
+        user_id: req.user?.id || null,
+        amount: amount, // cents
+        currency: 'EUR',
+        status: 'created'
+      });
+    } catch (dbErr) {
+      console.error('Failed to save payment record:', dbErr);
+      // don't fail the order creation because of DB - but log for later reconciliation
+    }
 
     res.json({ id: order.id });
   } catch (err) {
@@ -349,23 +359,39 @@ router.post('/paypal/capture', async (req, res) => {
 
     const capture = await capResp.json();
 
-    // Extract status and amount
-    const captureStatus = capture.status;
-    const captureAmount = (capture.purchase_units && capture.purchase_units[0] && capture.purchase_units[0].payments && capture.purchase_units[0].payments.captures && capture.purchase_units[0].payments.captures[0] && capture.purchase_units[0].payments.captures[0].amount && capture.purchase_units[0].payments.captures[0].amount.value) || null;
+    // Extract capture status and amount
+    const captureObj = capture.purchase_units && capture.purchase_units[0] && capture.purchase_units[0].payments && capture.purchase_units[0].payments.captures && capture.purchase_units[0].payments.captures[0];
+    const captureStatus = capture.status || (captureObj && captureObj.status);
+    const captureAmount = captureObj && captureObj.amount && captureObj.amount.value;
+    const captureId = captureObj && captureObj.id;
 
-    // If completed, update DB and user wallet
-    if (captureStatus === 'COMPLETED' || (capture.purchase_units && capture.purchase_units[0] && capture.purchase_units[0].payments && capture.purchase_units[0].payments.captures && capture.purchase_units[0].payments.captures[0] && capture.purchase_units[0].payments.captures[0].status === 'COMPLETED')) {
+    if (captureStatus === 'COMPLETED' || (captureObj && captureObj.status === 'COMPLETED')) {
       const amountEur = captureAmount ? parseFloat(captureAmount) : null;
 
-      // TODO: Update your payment record and user wallet. Reuse updateUserWallet or your DB helper.
-      // Example: await updateUserWallet(orderId, amountEur, 'success');
+      // Update DB and user wallet
+      try {
+        // Update payment status
+        await paymentDb.updatePaymentStatus(orderId, 'success', captureId);
 
-      console.log('PayPal capture successful for', orderId, 'amount', amountEur);
+        // Get saved payment to identify user
+        const payment = await paymentDb.getPaymentByOrderId(orderId);
+        if (payment) {
+          // credit wallet (updateWalletBalance expects euros)
+          if (amountEur) {
+            await paymentDb.updateWalletBalance(payment.user_id, amountEur, 'deposit');
+            await paymentDb.logWalletTransaction(payment.user_id, payment.id, amountEur, 'deposit', 'success');
+          }
+        } else {
+          console.warn('Payment record not found for orderId', orderId);
+        }
+      } catch (dbErr) {
+        console.error('Error updating DB after capture:', dbErr);
+        // continue, but flag for manual reconciliation
+      }
 
       return res.json({ success: true, capture, status: 'COMPLETED' });
     }
 
-    // Not completed
     console.warn('PayPal capture not completed', capture);
     res.status(400).json({ success: false, capture });
   } catch (err) {
@@ -375,38 +401,56 @@ router.post('/paypal/capture', async (req, res) => {
 });
 
 // ==========================================
-// Database Helper Functions (Implement these)
+// Database Helper Functions (Implement these as wrappers using paymentDb)
 // ==========================================
 
 /**
- * Update user wallet after payment
+ * Update user wallet after payment (used by Paysera callback)
  */
 async function updateUserWallet(orderId, amount, status) {
-  // TODO: Implement
-  // 1. Find user by orderId
-  // 2. Update wallet balance
-  // 3. Update payment status in database
-  console.log(`TODO: Update wallet for order ${orderId}, amount ${amount}, status ${status}`);
+  try {
+    const payment = await paymentDb.getPaymentByOrderId(orderId);
+    if (!payment) {
+      console.error('Payment record not found for orderId', orderId);
+      return;
+    }
+
+    // update payment status
+    await paymentDb.updatePaymentStatus(orderId, status, null);
+
+    if (status === 'success') {
+      // credit wallet (amount is expected in euros here)
+      await paymentDb.updateWalletBalance(payment.user_id, amount, 'deposit');
+      await paymentDb.logWalletTransaction(payment.user_id, payment.id, amount, 'deposit', 'success');
+    }
+  } catch (err) {
+    console.error('updateUserWallet error:', err);
+    throw err;
+  }
 }
 
 /**
  * Get payment record from database
  */
 async function getPaymentRecord(orderId) {
-  // TODO: Implement - Query your payments table
-  // Return payment record or null
-  console.log(`TODO: Get payment record for ${orderId}`);
-  return null;
+  try {
+    return await paymentDb.getPaymentByOrderId(orderId);
+  } catch (err) {
+    console.error('getPaymentRecord error:', err);
+    return null;
+  }
 }
 
 /**
  * Get user payment history
  */
 async function getUserPayments(userId) {
-  // TODO: Implement - Query payments for user
-  // Return array of payments
-  console.log(`TODO: Get payments for user ${userId}`);
-  return [];
+  try {
+    return await paymentDb.getUserPayments(userId);
+  } catch (err) {
+    console.error('getUserPayments error:', err);
+    return [];
+  }
 }
 
 module.exports = router;
