@@ -1,63 +1,49 @@
 /**
- * Paysera Payment Routes
+ * PayPal Payment Routes
  * Handles payment initialization, verification, and callbacks
  */
 
 const express = require('express');
-const crypto = require('crypto');
+const axios = require('axios');
 const router = express.Router();
 
 // Get credentials from environment variables
-const PROJECT_ID = process.env.PAYSERA_PROJECT_ID;
-const PASSWORD = process.env.PAYSERA_PASSWORD;
-const PAYSERA_API_URL = 'https://www.paysera.com/api/web-to-pay/process.cgi';
+const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
+const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET;
+const PAYPAL_MODE = process.env.PAYPAL_MODE || 'sandbox';
+
+const PAYPAL_API_BASE = PAYPAL_MODE === 'production' 
+  ? 'https://api.paypal.com'
+  : 'https://api.sandbox.paypal.com';
 
 /**
- * Generate signature for Paysera
- * @param {Object} data - Payment data
- * @returns {String} MD5 signature
+ * Get PayPal Access Token
+ * @returns {Promise<String>} Access token
  */
-function generateSignature(data) {
-  const message = [
-    data.projectid,
-    data.orderid,
-    data.amount,
-    data.currency,
-    data.accepturl,
-    data.cancelurl,
-    data.callbackurl,
-  ].join(';');
+async function getPayPalAccessToken() {
+  try {
+    if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
+      throw new Error('PayPal credentials not configured. Check PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET in .env');
+    }
 
-  return crypto
-    .createHash('md5')
-    .update(message + ';' + PASSWORD)
-    .digest('hex');
-}
+    const auth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`).toString('base64');
+    
+    const response = await axios.post(
+      `${PAYPAL_API_BASE}/v1/oauth2/token`,
+      'grant_type=client_credentials',
+      {
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }
+    );
 
-/**
- * Verify callback signature from Paysera
- * @param {Object} data - Callback data from Paysera
- * @returns {Boolean} Is signature valid
- */
-function verifySignature(data) {
-  const { ss1, ss2, ...paymentData } = data;
-  
-  const message = [
-    paymentData.projectid,
-    paymentData.orderid,
-    paymentData.amount,
-    paymentData.currency,
-    paymentData.accepturl,
-    paymentData.cancelurl,
-    paymentData.callbackurl,
-  ].join(';');
-
-  const calculatedSignature = crypto
-    .createHash('md5')
-    .update(message + ';' + PASSWORD)
-    .digest('hex');
-
-  return calculatedSignature === ss1;
+    return response.data.access_token;
+  } catch (error) {
+    console.error('Error getting PayPal access token:', error.response?.data || error.message);
+    throw new Error('Failed to authenticate with PayPal: ' + (error.response?.data?.error_description || error.message));
+  }
 }
 
 /**
@@ -66,7 +52,7 @@ function verifySignature(data) {
  */
 router.post('/initialize', async (req, res) => {
   try {
-    const { amount, currency, description, orderId, email, successUrl, failureUrl, callbackUrl } = req.body;
+    const { amount, currency, description, orderId, email, successUrl, failureUrl } = req.body;
 
     // Validate required fields
     if (!amount || !orderId || !email) {
@@ -76,134 +62,148 @@ router.post('/initialize', async (req, res) => {
       });
     }
 
-    // Prepare payment data for Paysera
+    // Get PayPal access token
+    const accessToken = await getPayPalAccessToken();
+
+    // Create payment object
     const paymentData = {
-      projectid: PROJECT_ID,
-      orderid: orderId,
-      amount: Math.round(amount), // Already in cents from frontend
-      currency: currency || 'EUR',
-      accepturl: successUrl,
-      cancelurl: failureUrl,
-      callbackurl: callbackUrl,
-      lang: 'en',
-      p_email: email,
-      p_street: '',
-      p_city: '',
-      p_state: '',
-      p_zip: '',
-      p_countrycode: 'AL',
-      test: process.env.NODE_ENV === 'development' ? 1 : 0,
+      intent: 'sale',
+      payer: {
+        payment_method: 'paypal',
+        payer_info: {
+          email: email,
+        },
+      },
+      redirect_urls: {
+        return_url: `${successUrl}?orderId=${orderId}`,
+        cancel_url: failureUrl,
+      },
+      transactions: [
+        {
+          amount: {
+            total: parseFloat(amount).toFixed(2),
+            currency: currency || 'USD',
+            details: {
+              subtotal: parseFloat(amount).toFixed(2),
+            },
+          },
+          description: description,
+          invoice_number: orderId,
+          custom: orderId,
+        },
+      ],
     };
 
-    // Generate signature
-    const signature = generateSignature(paymentData);
-    paymentData.sign = signature;
-
-    // Build redirect URL with query parameters
-    const queryString = new URLSearchParams(paymentData).toString();
-    const redirectUrl = `${PAYSERA_API_URL}?${queryString}`;
-
-    console.log('Payment initialized:', {
+    console.log('Creating PayPal payment with data:', {
+      amount: paymentData.transactions[0].amount.total,
+      currency: paymentData.transactions[0].amount.currency,
       orderId,
-      amount: amount / 100,
       email,
+    });
+
+    // Create payment with PayPal
+    const response = await axios.post(
+      `${PAYPAL_API_BASE}/v1/payments/payment`,
+      paymentData,
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    const payment = response.data;
+
+    // Find approval URL
+    const approvalUrl = payment.links.find(link => link.rel === 'approval_url')?.href;
+
+    if (!approvalUrl) {
+      throw new Error('No approval URL in PayPal response');
+    }
+
+    console.log('Payment initialized successfully:', {
+      orderId,
+      amount: amount,
+      paymentId: payment.id,
     });
 
     res.json({
       success: true,
-      redirectUrl: redirectUrl,
+      approvalUrl: approvalUrl,
       orderId: orderId,
+      paymentId: payment.id,
     });
   } catch (error) {
-    console.error('Payment initialization error:', error);
+    console.error('Payment initialization error:', error.message);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: error.message || 'Failed to initialize payment',
     });
   }
 });
 
 /**
- * Handle Paysera Callback
- * GET/POST /api/payments/callback
- */
-router.post('/callback', (req, res) => {
-  try {
-    const callbackData = req.body;
-
-    console.log('Paysera callback received:', callbackData);
-
-    // Verify signature
-    if (!verifySignature(callbackData)) {
-      console.error('Invalid signature in callback');
-      return res.status(401).json({ error: 'Invalid signature' });
-    }
-
-    const { orderid, amount, currency, status } = callbackData;
-
-    // Handle different payment statuses
-    if (status === '1') {
-      // Payment successful
-      updateUserWallet(orderid, amount / 100, 'success');
-      console.log(`Payment successful: ${orderid}, Amount: ${amount / 100} ${currency}`);
-    } else if (status === '2') {
-      // Payment pending
-      updateUserWallet(orderid, amount / 100, 'pending');
-      console.log(`Payment pending: ${orderid}`);
-    } else {
-      // Payment failed or cancelled
-      updateUserWallet(orderid, amount / 100, 'failed');
-      console.log(`Payment failed: ${orderid}`);
-    }
-
-    // Always respond with 200 OK to Paysera
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Callback error:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-/**
- * Verify Payment Status
+ * Execute/Verify Payment
  * POST /api/payments/verify
  */
 router.post('/verify', async (req, res) => {
   try {
-    const { paymentId, orderId } = req.body;
+    const { paymentId, payerId, orderId } = req.body;
 
-    // TODO: Query your database for payment status
-    // This depends on how you store payment records
-
-    const paymentRecord = await getPaymentRecord(orderId);
-
-    if (!paymentRecord) {
-      return res.status(404).json({
+    if (!paymentId || !payerId) {
+      return res.status(400).json({
         success: false,
-        error: 'Payment not found',
+        error: 'Missing paymentId or payerId',
       });
     }
 
-    if (paymentRecord.status === 'success') {
-      res.json({
-        success: true,
-        amount: paymentRecord.amount,
-        transactionId: paymentRecord.transactionId,
-        newBalance: paymentRecord.userBalance,
-        timestamp: paymentRecord.createdAt,
-      });
-    } else {
-      res.status(400).json({
+    // Get PayPal access token
+    const accessToken = await getPayPalAccessToken();
+
+    // Execute payment
+    const response = await axios.post(
+      `${PAYPAL_API_BASE}/v1/payments/payment/${paymentId}/execute`,
+      { payer_id: payerId },
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    const payment = response.data;
+
+    if (payment.state !== 'approved') {
+      return res.status(400).json({
         success: false,
-        error: 'Payment not completed',
-        status: paymentRecord.status,
+        error: 'Payment was not approved',
+        status: payment.state,
       });
     }
+
+    // Extract transaction details
+    const sale = payment.transactions[0].related_resources[0].sale;
+    const amount = payment.transactions[0].amount.total;
+
+    // Update user wallet in database
+    await updateUserWallet(orderId, parseFloat(amount), 'success', sale.id);
+
+    console.log(`Payment successful: ${orderId}, Amount: ${amount}, Transaction: ${sale.id}`);
+
+    res.json({
+      success: true,
+      amount: parseFloat(amount),
+      transactionId: sale.id,
+      orderId: orderId,
+      timestamp: new Date().toISOString(),
+    });
   } catch (error) {
-    console.error('Verification error:', error);
+    console.error('Payment verification error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: error.message || 'Failed to verify payment',
     });
   }
 });
@@ -240,22 +240,12 @@ router.get('/history', async (req, res) => {
 /**
  * Update user wallet after payment
  */
-async function updateUserWallet(orderId, amount, status) {
+async function updateUserWallet(orderId, amount, status, transactionId) {
   // TODO: Implement
   // 1. Find user by orderId
   // 2. Update wallet balance
   // 3. Update payment status in database
-  console.log(`TODO: Update wallet for order ${orderId}, amount ${amount}, status ${status}`);
-}
-
-/**
- * Get payment record from database
- */
-async function getPaymentRecord(orderId) {
-  // TODO: Implement - Query your payments table
-  // Return payment record or null
-  console.log(`TODO: Get payment record for ${orderId}`);
-  return null;
+  console.log(`TODO: Update wallet for order ${orderId}, amount ${amount}, status ${status}, transaction ${transactionId}`);
 }
 
 /**
