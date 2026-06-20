@@ -10,6 +10,9 @@ function DepositModal({ isOpen, onClose, onSuccess }) {
   const predefinedAmounts = [10, 25, 50, 100, 250, 500];
   const paypalRef = useRef();
 
+  // Optional fast direct PayPal link (set in env): if present we'll redirect there
+  const DIRECT_LINK = process.env.REACT_APP_PAYPAL_DIRECT_LINK || '';
+
   const handleQuickAmount = (value) => {
     setAmount(value.toString());
     setError('');
@@ -39,11 +42,16 @@ function DepositModal({ isOpen, onClose, onSuccess }) {
   };
 
   useEffect(() => {
-    // Load PayPal SDK when modal opens
     if (!isOpen) return;
+
+    // If direct link is configured we don't need to load PayPal SDK
+    if (DIRECT_LINK) return;
+
+    // Load PayPal SDK when modal opens (fallback orders API flow)
     const clientId = process.env.REACT_APP_PAYPAL_CLIENT_ID || '';
     if (!clientId) {
-      setError('PayPal client ID nuk është konfiguruar');
+      // If no client id and no direct link, show message
+      if (!DIRECT_LINK) setError('PayPal client ID nuk është konfiguruar');
       return;
     }
 
@@ -57,24 +65,22 @@ function DepositModal({ isOpen, onClose, onSuccess }) {
       script.onerror = () => setError('Nuk mund të ngarkohet PayPal SDK');
       document.body.appendChild(script);
     } else {
-      // SDK already present
       renderPayPalButtons();
     }
 
-    // Capture the current container reference for cleanup
     const containerRef = paypalRef.current;
     return () => {
       if (containerRef) containerRef.innerHTML = '';
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, amount]);
+  }, [isOpen, amount, DIRECT_LINK]);
 
   const renderPayPalButtons = () => {
-    // Ensure amount is valid before rendering a live button session
+    if (DIRECT_LINK) return; // don't render SDK buttons when using direct link
+
     const container = paypalRef.current;
     if (!container || !window.paypal) return;
 
-    // Clear previous buttons
     container.innerHTML = '';
 
     window.paypal.Buttons({
@@ -85,7 +91,6 @@ function DepositModal({ isOpen, onClose, onSuccess }) {
         label: 'paypal',
       },
       onClick: function (data, actions) {
-        // Validate before allowing checkout
         const numAmount = parseFloat(amount);
         if (!numAmount || numAmount < 7) {
           setError('Minimum deposit is €7');
@@ -95,7 +100,6 @@ function DepositModal({ isOpen, onClose, onSuccess }) {
         return actions.resolve();
       },
       createOrder: async function () {
-        // Ask backend to create an order and return PayPal order ID
         try {
           setLoading(true);
           if (!validateAmount()) throw new Error('Invalid amount');
@@ -135,14 +139,26 @@ function DepositModal({ isOpen, onClose, onSuccess }) {
     }).render(container);
   };
 
+  const handleDirectPay = () => {
+    if (!validateAmount()) return;
+    // Build redirect URL — append amount as query param if the link accepts it
+    const amountParam = parseFloat(amount).toFixed(2);
+    const base = DIRECT_LINK;
+    const sep = base.includes('?') ? '&' : '?';
+    // try common param names amount and value
+    // We'll first try amount param
+    const urlWithAmount = `${base}${sep}amount=${encodeURIComponent(amountParam)}`;
+
+    // Redirect user to PayPal link (note: if the PayPal link doesn't accept amount param it will ignore it)
+    window.location.href = urlWithAmount;
+  };
+
   if (!isOpen) return null;
 
   return (
     <>
-      {/* Overlay */}
       <div className="deposit-overlay" onClick={onClose}></div>
 
-      {/* Modal */}
       <div className="deposit-modal">
         <div className="modal-header">
           <h2>Depozito në Portofolin Tuaj</h2>
@@ -150,11 +166,9 @@ function DepositModal({ isOpen, onClose, onSuccess }) {
         </div>
 
         <div className="deposit-form">
-          {/* Amount Section */}
           <div className="amount-section">
             <label className="label">Zgjidh Shumën (EUR)</label>
 
-            {/* Quick Amount Buttons */}
             <div className="quick-amounts">
               {predefinedAmounts.map((val) => (
                 <button
@@ -168,7 +182,6 @@ function DepositModal({ isOpen, onClose, onSuccess }) {
               ))}
             </div>
 
-            {/* Custom Amount Input */}
             <div className="custom-amount">
               <span className="currency-symbol">€</span>
               <input
@@ -183,7 +196,6 @@ function DepositModal({ isOpen, onClose, onSuccess }) {
               />
             </div>
 
-            {/* Amount Info */}
             {amount && (
               <div className="amount-info">
                 <p className="total">Totali: <strong>€{parseFloat(amount).toFixed(2)}</strong></p>
@@ -192,32 +204,46 @@ function DepositModal({ isOpen, onClose, onSuccess }) {
             )}
           </div>
 
-          {/* Error Message */}
           {error && (
             <div className="error-message">⚠️ {error}</div>
           )}
 
-          {/* PayPal Button Container */}
-          <div style={{ marginTop: 12 }}>
-            <div ref={paypalRef} id="paypal-button-container"></div>
-          </div>
+          {/* If DIRECT_LINK is set, show fast redirect button */}
+          {DIRECT_LINK ? (
+            <div style={{ marginTop: 12 }}>
+              <button
+                type="button"
+                className="btn-deposit"
+                onClick={handleDirectPay}
+                disabled={loading || !amount}
+                style={{ width: '100%' }}
+              >
+                {loading ? 'Po përpunohet...' : 'Paguaj me PayPal'}
+              </button>
+              <p style={{ marginTop: 8, fontSize: 13, color: '#666' }}>
+                Do të ridrejtoheni te PayPal për të përfunduar pagesën.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div style={{ marginTop: 12 }}>
+                <div ref={paypalRef} id="paypal-button-container"></div>
+              </div>
+              <div className="modal-actions" style={{ marginTop: 12 }}>
+                <button
+                  type="button"
+                  className="btn-cancel"
+                  onClick={onClose}
+                  disabled={loading}
+                >
+                  Anulo
+                </button>
+                <div style={{ flex: 1 }} />
+              </div>
+            </>
+          )}
 
-          {/* Action Buttons */}
-          <div className="modal-actions" style={{ marginTop: 12 }}>
-            <button
-              type="button"
-              className="btn-cancel"
-              onClick={onClose}
-              disabled={loading}
-            >
-              Anulo
-            </button>
-
-            <div style={{ flex: 1 }} />
-          </div>
-
-          {/* Security Info */}
-          <div className="security-info">
+          <div className="security-info" style={{ marginTop: 12 }}>
             <p>🔒 Pagesa juaj është e siguruar me enkriptim SSL</p>
             <p>✓ Pagesat përpunohen nga PayPal</p>
           </div>
