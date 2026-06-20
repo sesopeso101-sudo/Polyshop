@@ -1,8 +1,3 @@
-/**
- * Paysera Payment Routes
- * Handles payment initialization, verification, and callbacks
- */
-
 const express = require('express');
 const crypto = require('crypto');
 const router = express.Router();
@@ -11,6 +6,22 @@ const router = express.Router();
 const PROJECT_ID = process.env.PAYSERA_PROJECT_ID;
 const PASSWORD = process.env.PAYSERA_PASSWORD;
 const PAYSERA_API_URL = 'https://www.paysera.com/api/web-to-pay/process.cgi';
+
+// PayPal credentials
+const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
+const PAYPAL_SECRET = process.env.PAYPAL_SECRET;
+const PAYPAL_USE_SANDBOX = (process.env.PAYPAL_USE_SANDBOX || 'true') === 'true';
+
+// Fetch helper (Node 18+ has global fetch). Fallback tries to require node-fetch if available.
+let fetchFunc = (typeof fetch !== 'undefined') ? fetch : null;
+if (!fetchFunc) {
+  try {
+    // eslint-disable-next-line global-require
+    fetchFunc = require('node-fetch');
+  } catch (e) {
+    console.warn('Fetch is not available and node-fetch is not installed. PayPal endpoints will fail without a fetch implementation.');
+  }
+}
 
 /**
  * Generate signature for Paysera
@@ -61,7 +72,7 @@ function verifySignature(data) {
 }
 
 /**
- * Initialize Payment
+ * Initialize Payment (Paysera compatibility)
  * POST /api/payments/initialize
  */
 router.post('/initialize', async (req, res) => {
@@ -125,7 +136,7 @@ router.post('/initialize', async (req, res) => {
 
 /**
  * Handle Paysera Callback
- * GET/POST /api/payments/callback
+ * POST /api/payments/callback
  */
 router.post('/callback', (req, res) => {
   try {
@@ -230,6 +241,136 @@ router.get('/history', async (req, res) => {
   } catch (error) {
     console.error('History error:', error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+// ==========================================
+// PayPal integration endpoints
+// ==========================================
+
+async function getPaypalAccessToken() {
+  if (!PAYPAL_CLIENT_ID || !PAYPAL_SECRET) throw new Error('PayPal credentials not configured');
+  const tokenUrl = PAYPAL_USE_SANDBOX
+    ? 'https://api-m.sandbox.paypal.com/v1/oauth2/token'
+    : 'https://api-m.paypal.com/v1/oauth2/token';
+  const auth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_SECRET}`).toString('base64');
+
+  const resp = await fetchFunc(tokenUrl, {
+    method: 'POST',
+    headers: {
+      Authorization: `Basic ${auth}`,
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: 'grant_type=client_credentials'
+  });
+
+  if (!resp.ok) {
+    const text = await resp.text();
+    throw new Error('Failed to get PayPal access token: ' + text);
+  }
+
+  const json = await resp.json();
+  return json.access_token;
+}
+
+// Create PayPal order
+// POST /api/payments/paypal/create
+router.post('/paypal/create', async (req, res) => {
+  try {
+    const { amount } = req.body; // expected in cents
+    if (!amount || typeof amount !== 'number') return res.status(400).json({ error: 'Invalid amount' });
+    if (amount < 700) return res.status(400).json({ error: 'Minimum deposit is 7 EUR' });
+
+    const token = await getPaypalAccessToken();
+    const PAYPAL_BASE = PAYPAL_USE_SANDBOX ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
+
+    const orderBody = {
+      intent: 'CAPTURE',
+      purchase_units: [
+        {
+          amount: {
+            currency_code: 'EUR',
+            value: (amount / 100).toFixed(2)
+          }
+        }
+      ]
+    };
+
+    const orderResp = await fetchFunc(`${PAYPAL_BASE}/v2/checkout/orders`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(orderBody)
+    });
+
+    if (!orderResp.ok) {
+      const txt = await orderResp.text();
+      console.error('PayPal create order failed:', txt);
+      return res.status(500).json({ error: 'PayPal create order failed' });
+    }
+
+    const order = await orderResp.json();
+
+    // TODO: Save order.id, amount and user association in your DB so you can verify/capture later.
+    // e.g. await createPaymentRecord({ orderId: order.id, amount, userId: req.user?.id, status: 'created' });
+
+    res.json({ id: order.id });
+  } catch (err) {
+    console.error('paypal/create error', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Capture PayPal order
+// POST /api/payments/paypal/capture
+router.post('/paypal/capture', async (req, res) => {
+  try {
+    const { orderId } = req.body;
+    if (!orderId) return res.status(400).json({ error: 'orderId required' });
+
+    const token = await getPaypalAccessToken();
+    const PAYPAL_BASE = PAYPAL_USE_SANDBOX ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
+
+    const capResp = await fetchFunc(`${PAYPAL_BASE}/v2/checkout/orders/${orderId}/capture`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!capResp.ok) {
+      const txt = await capResp.text();
+      console.error('PayPal capture failed:', txt);
+      return res.status(500).json({ error: 'PayPal capture failed' });
+    }
+
+    const capture = await capResp.json();
+
+    // Extract status and amount
+    const captureStatus = capture.status;
+    const captureAmount = (capture.purchase_units && capture.purchase_units[0] && capture.purchase_units[0].payments && capture.purchase_units[0].payments.captures && capture.purchase_units[0].payments.captures[0] && capture.purchase_units[0].payments.captures[0].amount && capture.purchase_units[0].payments.captures[0].amount.value) || null;
+
+    // If completed, update DB and user wallet
+    if (captureStatus === 'COMPLETED' || (capture.purchase_units && capture.purchase_units[0] && capture.purchase_units[0].payments && capture.purchase_units[0].payments.captures && capture.purchase_units[0].payments.captures[0] && capture.purchase_units[0].payments.captures[0].status === 'COMPLETED')) {
+      const amountEur = captureAmount ? parseFloat(captureAmount) : null;
+
+      // TODO: Update your payment record and user wallet. Reuse updateUserWallet or your DB helper.
+      // Example: await updateUserWallet(orderId, amountEur, 'success');
+
+      console.log('PayPal capture successful for', orderId, 'amount', amountEur);
+
+      return res.json({ success: true, capture, status: 'COMPLETED' });
+    }
+
+    // Not completed
+    console.warn('PayPal capture not completed', capture);
+    res.status(400).json({ success: false, capture });
+  } catch (err) {
+    console.error('paypal/capture error', err);
+    res.status(500).json({ error: err.message });
   }
 });
 
