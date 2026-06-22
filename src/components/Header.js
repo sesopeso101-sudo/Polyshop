@@ -1,36 +1,27 @@
 import React, { useEffect } from 'react';
 
-// Keep the exact deposit anchor (text and attributes) unchanged.
-const PAYPAL_DEPOSIT_URL = process.env.REACT_APP_PAYPAL_DEPOSIT_URL || 'https://www.paypal.com/ncp/payment/79WDAXCMA7L5S';
-
-function Header() {
-  // Ensure page background is white. This does not wrap or modify the deposit anchor.
+// This Header component intentionally clears the entire page when mounted,
+// leaving a blank white page as requested.
+export default function Header() {
   useEffect(() => {
-    const prev = document.body.style.backgroundColor;
-    document.body.style.backgroundColor = '#ffffff';
-    return () => { document.body.style.backgroundColor = prev; };
+    try {
+      // Remove all children from <body>
+      document.body.innerHTML = '';
+      // Ensure background is white
+      document.body.style.backgroundColor = '#ffffff';
+      // Remove margins
+      document.body.style.margin = '0';
+      // Ensure height
+      document.documentElement.style.height = '100%';
+      document.body.style.minHeight = '100vh';
+    } catch (e) {
+      // swallow errors silently
+      console.error('Failed to clear page:', e);
+    }
+
+    // No cleanup required (we leave the page blank)
+    return () => {};
   }, []);
 
-  return (
-    <a
-      href={PAYPAL_DEPOSIT_URL}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="deposit-btn primary"
-      aria-label="Depozito - Shto Fonde"
-      title="Depozito - Shto Fonde"
-    >
-      <span className="deposit-icon" aria-hidden>
-        {/* Download/Deposit SVG icon (kept as before) */}
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-          <path d="M12 3v11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M7 10l5 5 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M5 20h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </span>
-      <span className="deposit-text">Depozito</span>
-    </a>
-  );
+  return null;
 }
-
-export default Header;
