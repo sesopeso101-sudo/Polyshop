@@ -1,23 +1,13 @@
 /**
- * PayPalService - frontend wrapper that talks to backend PayPal endpoints
+ * PayPalService - frontend wrapper for server-side PayPal endpoints.
+ *
+ * NOTE: The frontend no longer creates orders or sends amounts. Deposits are handled
+ * directly via the external PayPal deposit URL. The backend should still handle any
+ * capture/webhook logic and history endpoints.
  */
 
 const PayPalService = {
-  async createOrder(amount) {
-    // amount: decimal EUR
-    const response = await fetch('/api/payments/paypal/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount }),
-    });
-
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err.error || 'Failed to create PayPal order');
-    }
-
-    return await response.json();
-  },
+  // createOrder removed: deposit amounts are handled in PayPal directly.
 
   async captureOrder(orderId) {
     const response = await fetch('/api/payments/paypal/capture', {

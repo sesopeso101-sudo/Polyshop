@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './Header.css';
-import DepositModal from './DepositModal';
+
+const PAYPAL_DEPOSIT_URL = process.env.REACT_APP_PAYPAL_DEPOSIT_URL || 'https://www.paypal.com/ncp/payment/79WDAXCMA7L5S';
 
 function Header({ purchaseType, setPurchaseType }) {
-  const [isDepositOpen, setIsDepositOpen] = useState(false);
-
   return (
     <header className="header">
       <div className="header-container">
@@ -50,16 +49,17 @@ function Header({ purchaseType, setPurchaseType }) {
               <span className="cash-amount">€0.01</span>
             </div>
 
-            {/* Subtle Deposit button - calm, integrated with wallet */}
-            <button
+            {/* Deposit button: directly opens PayPal deposit URL */}
+            <a
+              href={PAYPAL_DEPOSIT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="deposit-btn subtle"
-              onClick={() => setIsDepositOpen(true)}
               aria-label="Depozito - Shto Fonde"
               title="Depozito - Shto Fonde"
             >
-              <span className="deposit-icon" aria-hidden>💰</span>
               <span className="deposit-text">Depozito</span>
-            </button>
+            </a>
           </div>
 
           <div className="user-menu">
@@ -68,12 +68,6 @@ function Header({ purchaseType, setPurchaseType }) {
           </div>
         </div>
       </div>
-
-      {/* Deposit Modal */}
-      <DepositModal
-        isOpen={isDepositOpen}
-        onClose={() => setIsDepositOpen(false)}
-      />
     </header>
   );
 }
