@@ -1,4 +1,4 @@
-/* Header styles for Polyshop (Deposit refined to be subtle and calm) */
+/* Header styles for Polyshop (Deposit refined to be prominent action) */
 
 .header {
   padding: 18px 24px;
@@ -112,46 +112,44 @@
   color: #0f766e; /* muted teal for balance */
 }
 
-/* Subtle Deposit button - lightly filled / outlined, integrated with wallet */
+/* Prominent Deposit button - pill style like provided design */
 .deposit-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: transparent;
-  color: #0f172a; /* dark text */
-  border: 1px solid transparent;
-  border-radius: 10px;
+  gap: 12px;
+  padding: 12px 28px;
+  border-radius: 9999px;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
+  text-decoration: none;
+  transition: transform 0.08s ease, box-shadow 0.12s ease;
 }
 
-.deposit-btn.subtle {
-  background: rgba(14, 165, 233, 0.04); /* very light calm accent */
-  border-color: rgba(14,165,233,0.12);
-  color: #0369a1; /* calm blue for action text */
+.deposit-btn.primary {
+  background: linear-gradient(180deg,#1967F3 0%,#165FE0 100%);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(25,103,243,0.18);
+  border: none;
 }
 
-.deposit-btn:hover {
-  background: rgba(14, 165, 233, 0.06);
-  border-color: rgba(14,165,233,0.18);
+.deposit-btn.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(25,103,243,0.22);
 }
 
-.deposit-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(14,165,233,0.12);
+.deposit-btn.primary:active {
+  transform: translateY(0);
 }
 
-.deposit-icon {
-  font-size: 14px;
-  display: inline-block;
+.deposit-icon svg { /* icon inherits currentColor */
+  display: block;
+  width: 20px;
+  height: 20px;
+  color: #ffffff;
 }
 
-.deposit-text {
-  display: inline-block;
-}
+.deposit-text { display: inline-block; }
 
 .user-menu {
   display: flex;
@@ -213,12 +211,11 @@
     padding: 8px 12px 8px 32px;
   }
 
-  /* On small screens, show compact deposit button */
+  /* On small screens, reduce deposit padding */
   .deposit-btn {
-    padding: 6px 8px;
-    gap: 6px;
-    border-radius: 8px;
-    font-size: 13px;
+    padding: 8px 16px;
+    gap: 10px;
+    font-size: 14px;
   }
 
   .wallet, .cash { display: none; }
