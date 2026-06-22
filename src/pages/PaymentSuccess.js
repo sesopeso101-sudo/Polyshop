@@ -34,10 +34,12 @@ function PaymentSuccess() {
           setStatus('success');
           setDetails(data);
           
-          // Update user balance in localStorage
+          // Update user balance in localStorage if provided
           const user = JSON.parse(localStorage.getItem('user') || '{}');
-          user.balance = data.newBalance;
-          localStorage.setItem('user', JSON.stringify(user));
+          if (data.newBalance !== undefined) {
+            user.balance = data.newBalance;
+            localStorage.setItem('user', JSON.stringify(user));
+          }
 
           // Redirect to home after 3 seconds
           setTimeout(() => {
@@ -70,8 +72,8 @@ function PaymentSuccess() {
         {status === 'success' && (
           <div className="payment-state success">
             <div className="success-icon">✓</div>
-            <h2>Depozito i Suksesshëm!</h2>
-            <p className="success-message">Fonde janë shtuar në portofolin tuaj</p>
+            <h2>Pagesë e Suksesshme!</h2>
+            <p className="success-message">Fonde janë përpunuar me sukses</p>
             
             {details && (
               <div className="payment-details">
@@ -109,7 +111,7 @@ function PaymentSuccess() {
             <div className="error-actions">
               <button 
                 className="btn-retry"
-                onClick={() => navigate('/deposit')}
+                onClick={() => navigate('/')}
               >
                 Provo Përsëri
               </button>

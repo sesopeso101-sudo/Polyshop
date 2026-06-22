@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './Header.css';
-import DepositModal from './DepositModal';
 
 function Header({ purchaseType, setPurchaseType }) {
-  const [isDepositOpen, setIsDepositOpen] = useState(false);
-
   return (
     <header className="header">
       <div className="header-container">
@@ -49,13 +46,6 @@ function Header({ purchaseType, setPurchaseType }) {
             <span className="cash-amount">€0.01</span>
           </div>
 
-          <button 
-            className="deposit-btn"
-            onClick={() => setIsDepositOpen(true)}
-          >
-            Depozito
-          </button>
-
           <div className="user-menu">
             <span className="notifications">🔔</span>
             <span className="user-avatar">👤</span>
@@ -63,11 +53,7 @@ function Header({ purchaseType, setPurchaseType }) {
         </div>
       </div>
 
-      {/* Deposit Modal */}
-      <DepositModal 
-        isOpen={isDepositOpen}
-        onClose={() => setIsDepositOpen(false)}
-      />
+      {/* Deposit feature removed */}
     </header>
   );
 }
