@@ -69,6 +69,7 @@ function App() {
               key={product.id} 
               product={product} 
               purchaseType={purchaseType}
+              setPurchaseType={setPurchaseType}
             />
           ))}
         </div>
