@@ -4,14 +4,26 @@ import './ProductCard.css';
 function ProductCard({ product, purchaseType }) {
   const [isHovered, setIsHovered] = useState(false);
   const [actionType, setActionType] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [showMinOrderWarning, setShowMinOrderWarning] = useState(false);
   
   const displayPrice = purchaseType === 'wholesale' ? product.wholesale : product.price;
   const savings = purchaseType === 'wholesale' ? Math.round(((product.price - product.wholesale) / product.price) * 100) : 0;
   const isPositive = product.priceChange > 0;
 
   const handleAction = (type) => {
+    if (product.minOrder && quantity < product.minOrder) {
+      setShowMinOrderWarning(true);
+      setTimeout(() => setShowMinOrderWarning(false), 3000);
+      return;
+    }
     setActionType(type);
     setTimeout(() => setActionType(null), 1200);
+  };
+
+  const handleQuantityChange = (e) => {
+    const value = parseInt(e.target.value) || 1;
+    setQuantity(value);
   };
 
   return (
@@ -83,6 +95,28 @@ function ProductCard({ product, purchaseType }) {
               <span className="original-price">€{product.price.toFixed(2)}</span>
             )}
           </div>
+
+          {/* Quantity Input */}
+          {product.minOrder && (
+            <div className="quantity-input-group">
+              <label htmlFor={`qty-${product.id}`}>Sasia:</label>
+              <input
+                id={`qty-${product.id}`}
+                type="number"
+                min="1"
+                value={quantity}
+                onChange={handleQuantityChange}
+                className="quantity-input"
+              />
+            </div>
+          )}
+
+          {/* Minimum Order Warning */}
+          {showMinOrderWarning && product.minOrder && (
+            <div className="min-order-warning">
+              ⚠️ Renditja minimale: {product.minOrder} njësi
+            </div>
+          )}
 
           <div className="button-group">
             <button 
