@@ -50,16 +50,15 @@ function Header({ purchaseType, setPurchaseType }) {
               <span className="cash-amount">€0.01</span>
             </div>
 
-            {/* Prominent Deposit button - primary action */}
+            {/* Subtle Deposit button - calm, integrated with wallet */}
             <button
-              className="deposit-btn"
+              className="deposit-btn subtle"
               onClick={() => setIsDepositOpen(true)}
               aria-label="Depozito - Shto Fonde"
               title="Depozito - Shto Fonde"
             >
               <span className="deposit-icon" aria-hidden>💰</span>
               <span className="deposit-text">Depozito</span>
-              <span className="deposit-badge">Shto Fonde</span>
             </button>
           </div>
 

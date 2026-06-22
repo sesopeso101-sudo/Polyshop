@@ -1,4 +1,4 @@
-/* Header styles for Polyshop (Deposit emphasized) */
+/* Header styles for Polyshop (Deposit refined to be subtle and calm) */
 
 .header {
   padding: 18px 24px;
@@ -72,7 +72,7 @@
   border-radius: 6px;
   font-size: 13px;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: all 0.18s ease;
   white-space: nowrap;
 }
 
@@ -83,7 +83,7 @@
 .toggle-btn.active {
   background: #3b82f6;
   color: white;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.12);
 }
 
 .wallet-and-deposit {
@@ -101,7 +101,7 @@
 
 .wallet-label, .cash-label {
   font-size: 11px;
-  color: #999;
+  color: #6b7280; /* calm gray */
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -109,49 +109,48 @@
 .wallet-amount, .cash-amount {
   font-size: 14px;
   font-weight: 600;
-  color: #10b981;
+  color: #0f766e; /* muted teal for balance */
 }
 
-/* Prominent Deposit button styles */
+/* Subtle Deposit button - lightly filled / outlined, integrated with wallet */
 .deposit-btn {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
-  background: linear-gradient(90deg, #f59e0b 0%, #f97316 100%);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 14px;
-  box-shadow: 0 6px 18px rgba(249, 115, 22, 0.18);
+  gap: 8px;
+  padding: 8px 12px;
+  background: transparent;
+  color: #0f172a; /* dark text */
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 13px;
   cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
-  white-space: nowrap;
+  transition: background-color 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
+}
+
+.deposit-btn.subtle {
+  background: rgba(14, 165, 233, 0.04); /* very light calm accent */
+  border-color: rgba(14,165,233,0.12);
+  color: #0369a1; /* calm blue for action text */
 }
 
 .deposit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(249, 115, 22, 0.22);
+  background: rgba(14, 165, 233, 0.06);
+  border-color: rgba(14,165,233,0.18);
+}
+
+.deposit-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(14,165,233,0.12);
 }
 
 .deposit-icon {
-  font-size: 18px;
+  font-size: 14px;
   display: inline-block;
 }
 
 .deposit-text {
   display: inline-block;
-}
-
-.deposit-badge {
-  background: rgba(255,255,255,0.12);
-  color: #fff;
-  font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 8px;
-  margin-left: 6px;
-  font-weight: 600;
 }
 
 .user-menu {
@@ -167,7 +166,7 @@
 }
 
 .notifications:hover, .user-avatar:hover {
-  transform: scale(1.2);
+  transform: scale(1.1);
 }
 
 @media (max-width: 1024px) {
@@ -214,19 +213,15 @@
     padding: 8px 12px 8px 32px;
   }
 
-  .wallet, .cash {
-    display: none;
-  }
-
-  /* On small screens, make deposit button compact but visible */
+  /* On small screens, show compact deposit button */
   .deposit-btn {
-    padding: 8px 10px;
+    padding: 6px 8px;
     gap: 6px;
-    border-radius: 10px;
+    border-radius: 8px;
     font-size: 13px;
   }
 
-  .deposit-badge { display: none; }
+  .wallet, .cash { display: none; }
 }
 
 @media (max-width: 480px) {
@@ -235,16 +230,7 @@
     gap: 12px;
   }
 
-  .header-left {
-    width: 100%;
-  }
-
-  .search-box {
-    max-width: 100%;
-  }
-
-  .header-right {
-    width: 100%;
-    justify-content: space-between;
-  }
+  .header-left { width: 100%; }
+  .search-box { max-width: 100%; }
+  .header-right { width: 100%; justify-content: space-between; }
 }
