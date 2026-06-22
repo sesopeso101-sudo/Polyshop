@@ -227,6 +227,32 @@ function App() {
       wholesale: 850,
       rating: 4.8,
     },
+    {
+      id: 17,
+      name: 'Car Radio 7010B',
+      category: 'electronics',
+      price: 89,
+      priceChange: 0.0,
+      description: 'Radio makine me ekran digjital, Bluetooth dhe aux input',
+      image: '📻',
+      seller: 'Auto Electronics Store',
+      stock: 56,
+      wholesale: 59,
+      rating: 4.6,
+    },
+    {
+      id: 18,
+      name: 'Car Radio 1807BT',
+      category: 'electronics',
+      price: 129,
+      priceChange: 1.2,
+      description: 'Radio makine me Bluetooth, USB, MP3 dhe kontrollin zërit',
+      image: '📻',
+      seller: 'Auto Electronics Store',
+      stock: 42,
+      wholesale: 89,
+      rating: 4.7,
+    },
   ];
 
   const filteredProducts = selectedCategory === 'trending' 
