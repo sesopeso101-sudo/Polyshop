@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ProductCard.css';
 
-function ProductCard({ product, purchaseType }) {
+function ProductCard({ product, purchaseType, setPurchaseType }) {
   const [isHovered, setIsHovered] = useState(false);
   const [actionType, setActionType] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -17,6 +17,8 @@ function ProductCard({ product, purchaseType }) {
       setTimeout(() => setShowMinOrderWarning(false), 3000);
       return;
     }
+    // Set the purchase type
+    setPurchaseType(type);
     setActionType(type);
     setTimeout(() => setActionType(null), 1200);
   };
@@ -120,7 +122,7 @@ function ProductCard({ product, purchaseType }) {
 
           <div className="button-group">
             <button 
-              className={`action-btn normal-btn ${actionType === 'normal' ? 'active' : ''} ${isHovered ? 'hovered' : ''}`}
+              className={`action-btn normal-btn ${purchaseType === 'normal' ? 'active' : ''} ${isHovered ? 'hovered' : ''}`}
               onClick={() => handleAction('normal')}
               title="Çmimi Normal"
             >
@@ -129,7 +131,7 @@ function ProductCard({ product, purchaseType }) {
             </button>
             
             <button 
-              className={`action-btn wholesale-btn ${actionType === 'wholesale' ? 'active' : ''} ${isHovered ? 'hovered' : ''}`}
+              className={`action-btn wholesale-btn ${purchaseType === 'wholesale' ? 'active' : ''} ${isHovered ? 'hovered' : ''}`}
               onClick={() => handleAction('wholesale')}
               title="Çmimi Shumicë"
             >
