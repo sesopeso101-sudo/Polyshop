@@ -16,8 +16,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Import routes
-const payseraRoutes = require('./routes/paysera');
 const paymentRoutes = require('./routes/payments');
+const paypalRoutes = require('./routes/paypal');
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -25,8 +25,8 @@ app.get('/health', (req, res) => {
 });
 
 // Register payment routes
-app.use('/api/payments', payseraRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/payments/paypal', paypalRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -49,7 +49,6 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Polyshop Backend running on port ${PORT}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`💳 Payment Gateway: ${process.env.PAYSERA_PROJECT_ID ? 'Paysera' : 'PayPal'}`);
   console.log(`🔗 CORS Origin: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
   console.log(`✅ Health check: http://localhost:${PORT}/health`);
 });
