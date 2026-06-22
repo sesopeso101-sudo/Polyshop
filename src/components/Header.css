@@ -1,3 +1,73 @@
+/* Header styles for Polyshop (deposit button removed) */
+
+.header {
+  padding: 18px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-icon {
+  font-size: 22px;
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-input {
+  padding: 10px 12px 10px 36px;
+  border: 1px solid #e6eef6;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.purchase-toggle {
+  display: flex;
+  gap: 8px;
+}
+
+.toggle-btn {
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid transparent;
   cursor: pointer;
   border-radius: 6px;
   font-size: 13px;
