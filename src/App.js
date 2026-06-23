@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Navigation from './components/Navigation';
 import TrendingSection from './components/TrendingSection';
 import ProductCard from './components/ProductCard';
+import { Analytics } from '@vercel/analytics/react';
 
 function App() {
   const [selectedCategory, setSelectedCategory] = useState('trending');
@@ -74,6 +75,7 @@ function App() {
           ))}
         </div>
       </main>
+      <Analytics />
     </div>
   );
 }
